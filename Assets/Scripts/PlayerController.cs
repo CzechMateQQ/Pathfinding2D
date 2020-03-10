@@ -1,24 +1,30 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class PlayerController : MonoBehaviour
 {
-    // Start is called before the first frame update
+    [SerializeField]
+    private NavMeshAgent player;
+
+    RaycastHit hitInfo = new RaycastHit();
+
     void Start()
     {
-        
+        player = GetComponent<NavMeshAgent>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
-    }
+        if (Input.GetMouseButtonDown(0))
+        {
+            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-    void Move()
-    {
-        Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
+            if (Physics.Raycast(ray.origin, ray.direction, out hitInfo))
+                player.destination = hitInfo.point;
+        }
     }
 }
+
+
