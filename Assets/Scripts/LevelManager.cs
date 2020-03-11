@@ -33,10 +33,23 @@ public class LevelManager : MonoBehaviour
     public Sprite openBR;
 
     public NavMeshAgent player;
+    public NavMeshAgent enemyOne;
+    public NavMeshAgent enemyTwo;
+
+    private Vector3 playerStart;
+    private Vector3 enemyOneStart;
+    private Vector3 enemyTwoStart;
+
     private bool doorOpen = false;
 
     private void Start()
     {
+        winCanvas.SetActive(false);
+
+        playerStart = player.transform.position;
+        enemyOneStart = enemyOne.transform.position;
+        enemyTwoStart = enemyTwo.transform.position;
+
         flameOneSR = flameOne.GetComponent<SpriteRenderer>();
         flameTwoSR = flameTwo.GetComponent<SpriteRenderer>();
         flameThreeSR = flameThree.GetComponent<SpriteRenderer>();
@@ -47,20 +60,22 @@ public class LevelManager : MonoBehaviour
         doorFourSR = doorFour.GetComponent<SpriteRenderer>();
     }
 
+    // Checks win conditions
     void Update()
     {
-        if (flameOneSR.sprite == litFlame && flameTwoSR == litFlame && flameThreeSR == litFlame)
+        if (flameOneSR.sprite == litFlame && flameTwoSR.sprite == litFlame && flameThreeSR.sprite == litFlame)
         {
             OpenDoor();
         }
 
-        if(doorOpen && player.transform.position.x < 4.5f && player.transform.position.y > 12.5f)
+        if(doorOpen && player.transform.position.x < 4.5f && player.transform.position.z > 12.5f)
         {
             LevelComplete();
             Debug.Log("You Win!");
-        }
+        }    
     }
 
+    // Swaps closed door sprites for open door sprites upon completeing objective
     void OpenDoor()
     {
         doorOneSR.sprite = openTL;
@@ -71,8 +86,18 @@ public class LevelManager : MonoBehaviour
         doorOpen = true;
     }
     
+    // Displays win canvas and resets character positions
     void LevelComplete()
     {
         winCanvas.SetActive(true);
+
+        player.Warp(playerStart);
+        player.destination = playerStart;
+
+        enemyOne.Warp(enemyOneStart);
+        player.destination = enemyOneStart;
+
+        enemyTwo.Warp(enemyTwoStart);
+        enemyTwo.destination = enemyTwoStart;
     }
 }

@@ -6,20 +6,19 @@ using UnityEngine.AI;
 // Controls player as well as Enemy (1) since both move towards mouse click
 public class MoveToClick : MonoBehaviour
 {
-    [SerializeField]
-    private NavMeshAgent player;
-
+    public NavMeshAgent player;
     private Vector3 startPos;
-    private Vector3 enemyStartPos;
 
     RaycastHit hitInfo = new RaycastHit();
 
+    // Save character starting position
     void Start()
     {
         player = GetComponent<NavMeshAgent>();
         startPos = player.transform.position;
     }
 
+    // Click to move
     void Update()
     {
         player.updateRotation = false;
@@ -33,6 +32,7 @@ public class MoveToClick : MonoBehaviour
         }
     }
 
+    // Resets character position to start on collision with enemy
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Enemy") || other.gameObject.CompareTag("Player"))

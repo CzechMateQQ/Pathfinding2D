@@ -13,27 +13,31 @@ public class FiniteStateMachine : MonoBehaviour
 {
     private States currentState;
 
-    public NavMeshAgent enemy;
+    public NavMeshAgent enemyOne;
     public NavMeshAgent player;
     public Sprite litFlame;
     public GameObject flame;
 
     private SpriteRenderer myFlameSR;
-    private Vector3 enemyStart;
+    private Vector3 enemyOneStart;
     private float patrolA;
     private float patrolB;
 
+    private int direction = 0;
+
     RaycastHit hitInfo = new RaycastHit();
 
+    // Establish enemy start position and patrol points
     void Start()
     {
-        enemy = GetComponent<NavMeshAgent>();
-        enemyStart = enemy.transform.position;
-        patrolA = enemyStart.x;
-        patrolB = enemyStart.x + 1;
+        enemyOne = GetComponent<NavMeshAgent>();
+        enemyOneStart = enemyOne.transform.position;
+        patrolA = enemyOneStart.x;
+        patrolB = enemyOneStart.x + 1;
         myFlameSR = flame.GetComponent<SpriteRenderer>();
     }
 
+    // Decision for current state
     void Update()
     {
         if (myFlameSR.sprite == litFlame)      
@@ -55,39 +59,37 @@ public class FiniteStateMachine : MonoBehaviour
         }
     }
 
-    private int direction = 0;
-
     void Patrol()
     {
-        enemy.updateRotation = false;
+        enemyOne.updateRotation = false;
 
         switch (direction)
         {
             case 0:
-                enemy.destination = new Vector3(patrolB, enemyStart.y, enemyStart.z);
+                enemyOne.destination = new Vector3(patrolB, enemyOneStart.y, enemyOneStart.z);
                 break;
             case 1:
-                enemy.destination = new Vector3(patrolA, enemyStart.y, enemyStart.z);
+                enemyOne.destination = new Vector3(patrolA, enemyOneStart.y, enemyOneStart.z);
                 break;
         }
 
-        if (enemy.transform.position.x <= patrolA)
+        if (enemyOne.transform.position.x <= patrolA)
             direction = 0;
 
-        if (enemy.transform.position.x >= patrolB)
+        if (enemyOne.transform.position.x >= patrolB)
             direction = 1;
     }
 
     void Move()
     {
-        enemy.updateRotation = false;
+        enemyOne.updateRotation = false;
 
         if (Input.GetMouseButtonDown(0))
         {
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
             if (Physics.Raycast(ray.origin, ray.direction, out hitInfo))
-                enemy.destination = player.transform.position;
+                enemyOne.destination = player.transform.position;
         }
     }
 
@@ -95,8 +97,8 @@ public class FiniteStateMachine : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            enemy.Warp(enemyStart);
-            enemy.destination = enemyStart;
+            enemyOne.Warp(enemyOneStart);
+            enemyOne.destination = enemyOneStart;;
         }
     }
 }
